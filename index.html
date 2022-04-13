@@ -66,10 +66,9 @@
   <!--    <a href="#hero" class="logo me-auto me-lg-0"><img src="assets/img/busd-miner.png" alt=""></a>  -->
       <nav id="navbar" class="navbar order-last order-lg-0">
         <ul>
-  <!--        <li><a class="nav-link scrollto bnb-miner" href="https://bnbmining.finance/" target="_blank">Check out BNB Miner!</a></li>  -->
-          <li>
-            <a class="nav-link scrollto mine" href="#mine">Start Mining</a>
-          </li>
+         <!-- <li>
+            <a class="nav-link" href="https://cronos.spacefinance.online"><img class="nav-logo" id="logo" alt="" src="assets/img/cronos.png"></img>Cronos Space</a>
+          </li> -->
           <!-- <li>
             <a class="nav-link scrollto" href="https://spacemoneydapp.gitbook.io/space-dao/implements/space-miner">FAQ</a>
           </li>
@@ -225,10 +224,6 @@
       <div class="container main" data-aos="fade-up">
         <div class="row justify-content-center">
           <div class="col-xl-12 col-md-12 disclaimer">
-            <i class="ri-alert-line"></i>
-	  <strong style="color: #f82020;">Note:</strong> Funds that are deposited (including compounds) cannot be withdrawn, however the miner will pay daily dividends and
-	  referrals rewards for the life of the contract. Please use at your own risk. Remember, never invest more than you can afford to lose
-	  and always do your own research!
           </div>
         </div>
         <div class="content-box ">
@@ -279,7 +274,7 @@
             <div class="col-lg-2 stat">
               <div class="header">
                 <i class="bi-people"></i>
-                Referral Rewards
+                Referrals
                 (<span id="ref-count">0</span>)
               </div>
               <div>
@@ -305,6 +300,16 @@
                 </span>
               </span>
             </div>
+			<div>
+              <span>
+			    <i class="ri-alert-line"></i>
+                <strong style="color: #f82020;">Note:</strong> Funds that are deposited (including compounds) cannot be withdrawn, however the miner will pay daily dividends and
+				  referrals rewards for the life of the contract. Please use at your own risk. Remember, never invest more than you can afford to lose
+				  and always do your own research!
+              </span>
+            </div>
+			
+	  
           </div>
           <div class="row">
             <div class="col-xl-6 first-box" style="margin-top: 5px;">
@@ -342,7 +347,13 @@
                     </div>
                   </div>
                 </div>
-				<br><br><br><br><br><br><br><br>
+				<br><br>	
+				<div class="timer" style="color:white;">
+                    <i class="bi-hourglass-split"></i>
+                    Cart will be full in
+                  </div>
+                  <div style="text-align: center;"><span id="claim-timer">00:00:00</span></div>
+				  <br><br><br>
                 <div class="btn-container">
                   <strong style="padding-left: 5px; padding-bottom: 5px";>
                     <span style="font-size: 16px;">1.</span><!-- <i class="bi-bank"></i> -->
@@ -379,29 +390,23 @@
                     <strong id="mined">0</strong>
                     <span><strong class="busd">AVAX</strong></span>
                   </div>
+				  <br>
                   <!-- <span class="usd" style="font-size: 14px;">
                     ≈ $<span id="mined-usd" >0 </span> USD
                   </span> -->
-                  <div class="usd" style="font-size: 14px; padding: 25px 0 25px 0">
-                    <strong>Estimated daily yield</strong>
-                    <div>
-                      <span id="eggs-per-day">0</span> <strong class="busd">AVAX</strong>
-                      <!-- ≈ $<span id="eggs-per-day-usd"> 0 </span> USD -->
-                    </div>
+				  <div class="timer" style="color:white;">
+                    Estimated daily yield:
                   </div>
+                  <div style="text-align: center;"><span id="eggs-per-day">0</span> <strong class="busd">AVAX</strong></div>
                 </div>
+				<br>
                 <div>
-                  <div class="timer">
-                    <i class="bi-hourglass-split"></i>
-                    Cart will be full in
-                  </div>
-                  <div style="text-align: center;"><span id="claim-timer">00:00:00</span></div>
                   <br>
-		  <div class="timer">
+		  <div class="timer" style="color:white;">
 		    <i class="bi-arrow-repeat"></i>
     			Compound Count: 
-		    <span id="compound-count"> 0</span>
-                  </div>
+				</div>
+				<div style="text-align: center;"><span id="compound-count">0 Day/s</span></div>
 		    <div class="btn-container">
                     <div>
                       <button class="btn start-btn" style="width: 98%;" id="withdraw" onclick="sellEggs()" role="button" disabled>
@@ -423,12 +428,13 @@
               </div>
             </div>
           </div>
-        </div>
+		  
         <div class="mt-1" style="padding: 25px; font-size: 15px; font-weight: 500;">
           Every day you compound without withdrawing, your compound bonus grows by
           <span id="compound-percent">0%</span>
           (max <span id="max-compound">+0%</span>). Withdrawing will reset your bonus to 0.
           Time until next compound bonus is activated: <span style="font-weight: 700;" id="compound-timer">00:00:00</span>
+        </div>
         </div>
       </div>
     </section>
