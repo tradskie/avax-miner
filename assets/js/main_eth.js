@@ -288,7 +288,7 @@ function refreshData() {
         }
         var extraPercent = 0;
         console.log('dailyCompoundBonus = ' + dailyCompoundBonus)
-		$("#compound-count").html(`${dailyCompoundBonus} Days`);
+		$("#compound-count").html(`${dailyCompoundBonus} Day/s`);
         if (dailyCompoundBonus > 0) {
             extraPercent += dailyCompoundBonus * compoundPercent;
             $("#compound-bonus").html(`+${extraPercent}% bonus`);
