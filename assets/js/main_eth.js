@@ -23,8 +23,7 @@ var withdrawCooldown=0;
 
 var contract;
 
-const minerAddress = '0x9b4b07594Ad27084690ae9F845a46A1456e8F3C8' // testnet
-//const minerAddress = '' // mainnet contract
+const minerAddress = '0x9b4b07594Ad27084690ae9F845a46A1456e8F3C8'; // mainnet contract
 
 var started = true;
 var canSell = true;
@@ -33,6 +32,7 @@ const minerAbi = [{"inputs":[{"internalType":"address payable","name":"_owner","
  
 
 // ------ contract calls
+
 function loadContracts() {
     console.log('Loading contracts...')
     web3 = window.web3
@@ -120,7 +120,7 @@ function controlLoopFaster() {
 function roundNum(num) {
     if (num == 0) { return 0};
     if (num < 1) {
-        return parseFloat(num).toFixed(4)
+        return parseFloat(num).toFixed(4);
     }
     return parseFloat(parseFloat(num).toFixed(2));
 }
@@ -128,15 +128,15 @@ function roundNum(num) {
 function refreshData() {
     console.log('Refreshing data...')
     // try {
-    //     tokenPrice(function(busdPrice){
-    //         var priceJson = JSON.parse(busdPrice)
+    //     tokenPrice(function(bnbPrice){
+    //         var priceJson = JSON.parse(bnbPrice)
     //         priceInUSD = +priceJson['binancecoin']['usd'];
     //     });
     // } catch { priceInUSD = 0; }
 
     contract.methods.EGGS_TO_HIRE_1MINERS().call().then(eggs => {
         eggstohatch1 = eggs
-        var dailyPercent = Number((86400 / eggstohatch1) * 100).toFixed(2);
+        var dailyPercent = Number((86400 / eggstohatch1) * 100);
         var apr = dailyPercent * 365;
         $("#daily-rate").html(`${dailyPercent}% Daily ~ ${apr}% APR`);
     }).catch((err) => {
@@ -145,7 +145,7 @@ function refreshData() {
 
     contract.methods.COMPOUND_BONUS().call().then(r => {
         compoundPercent = r / 10;
-        $("#daily-compound").html(`${compoundPercent}% Daily Hire Bonus`)
+        $("#daily-compound").html(`${compoundPercent}% Daily Compound Bonus`)
         $("#compound-percent").html(`${compoundPercent}%`)
     }).catch((err) => {
         console.log('COMPOUND_BONUS', err);
@@ -164,11 +164,11 @@ function refreshData() {
     })
 
     contract.methods.REFERRAL().call().then(r => {
-        var refPercent = Number(r / 10).toFixed(0);
-        $("#ref-bonus").html(`${refPercent}% Referral Bonus`)
+        var refPercent = Number(r / 10);
+        $("#ref-bonus").html(`${refPercent}% Referral Rewards`)
         $("#ref-percent").html(`${refPercent}%`)
     }).catch((err) => {
-        console.log('REFERRAL', err);
+        console.log(err);
     });
 
     contract.methods.COMPOUND_BONUS_MAX_TIMES().call().then(r => {
@@ -187,16 +187,16 @@ function refreshData() {
         console.log('COMPOUND_FOR_NO_TAX_WITHDRAWAL', err);
     });
 
-    contract.methods.WALLET_DEPOSIT_LIMIT().call().then(busd => {
-        maxDeposit = busd;
-        $("#max-deposit").html(`${readableBUSD(busd, 2)}`)
+    contract.methods.WALLET_DEPOSIT_LIMIT().call().then(bnb => {
+        maxDeposit = bnb;
+        $("#max-deposit").html(`${readableBNB(bnb)} AVAX`)
     }).catch((err) => {
         console.log('WALLET_DEPOSIT_LIMIT', err);
-    });
+    });	
 	
 	contract.methods.MIN_INVEST_LIMIT().call().then(busd => {
         minDeposit = busd;
-        $("#min-deposit").html(`${readableBUSD(busd, 2)}`)
+        $("#min-deposit").html(`${readableBNB(bnb)} AVAX`)
     }).catch((err) => {
         console.log('MIN_INVEST_LIMIT', err);
     });
@@ -207,59 +207,61 @@ function refreshData() {
         console.log(err);
     });
 
-     /** How many miners and eggs per day user will recieve for 500 BUSD deposit **/
-    contract.methods.getEggsYield(web3.utils.toWei('500')).call().then(result => {
+    /** How many miners and eggs per day user will recieve for 1 AVAX deposit **/
+    contract.methods.getEggsYield(web3.utils.toWei('1')).call().then(result => {
         var miners = result[0];
-        var busd = result[1];
-        var amt = readableBUSD(busd, 4);
+        var bnb = result[1];
+        var amt = readableBNB(bnb, 4);
 
         $("#example-miners").html(miners)
-        $("#example-busd").html(roundNum(amt))
-        // var usd = Number(priceInUSD*amt).toFixed(2);
-        // $("#example-usd").html(usd)
+        $("#example-bnb").html(roundNum(amt))
+        //var usd = Number(priceInUSD*amt).toFixed(2);
+        //$("#example-usd").html(usd)
     }).catch((err) => {
-        console.log('getEggsYield', err);
+        console.log(err);
     });
-	
+
     if (started) {
         contract.methods.getBalance().call().then(balance => {
             contractBalance = balance;
             var amt = web3.utils.fromWei(balance);
             $('#contract-balance').html(roundNum(amt));
-            // var usd = Number(priceInUSD*amt).toFixed(2);
-            // $("#contract-balance-usd").html(usd)
+            //var usd = Number(priceInUSD*amt).toFixed(2);
+            //$("#contract-balance-usd").html(usd)
         }).catch((err) => {
             console.log(err);
         });
 
         contract.methods.getSiteInfo().call().then(result => {
             var staked = web3.utils.fromWei(result._totalStaked);
-            $('#total-staked').html(roundNum(staked));	
-            //$('#total-staked').html(staked);
-            // var stakedUSD = Number(priceInUSD*staked).toFixed(2);
-            // $("#total-staked-usd").html(stakedUSD)
+            $('#total-staked').html(roundNum(staked));
+            //var stakedUSD = Number(priceInUSD*staked).toFixed(2);
+            //$("#total-staked-usd").html(stakedUSD)
             $('#total-players').html(result._totalDeposits);
             var ref = result._totalRefBonus;
             if (ref > 0) {
-                var refBUSD = readableBUSD(ref, 2);
-                $("#total-ref").html(refBUSD);
-                // var refUSD = Number(priceInUSD*refBUSD).toFixed(2);
-                // $('#total-ref-usd').html(refUSD)
+                var refBNB = readableBNB(ref, 2);
+                $("#total-ref").html(refBNB);
+                //var refUSD = Number(priceInUSD*refBNB).toFixed(2);
+                //$('#total-ref-usd').html(refUSD)
+            } else {
+                $('#total-ref-usd').html('0.00');
+                $('#total-ref').html('0');
             }
         }).catch((err) => {
-            console.log('getSiteInfo', err);
+            console.log(err);
         });
     }
 
-    // web3.eth.getBalance(currentAddr).then(userBalance => {
-    //     usrBal = userBalance;
-    //     var amt = web3.utils.fromWei(userBalance);
-    //     $("#user-balance").html(roundNum(amt));
-    //     var usd = Number(priceInUSD*amt).toFixed(2);
-    //     $("#user-balance-usd").html(usd)
-    // }).catch((err) => {
-    //     console.log(err);
-    // });
+    web3.eth.getBalance(currentAddr).then(userBalance => {
+        usrBal = userBalance;
+        var amt = web3.utils.fromWei(userBalance);
+        $("#user-balance").html(roundNum(amt));
+        //var usd = Number(priceInUSD*amt).toFixed(2);
+        //$("#user-balance-usd").html(usd)
+    }).catch((err) => {
+        console.log(err);
+    });
 
     contract.methods.getUserInfo(currentAddr).call().then(user => {
         var initialDeposit = user._initialDeposit;
@@ -287,12 +289,12 @@ function refreshData() {
         }
         var extraPercent = 0;
         console.log('dailyCompoundBonus = ' + dailyCompoundBonus)
-	$("#compound-count").html(`${dailyCompoundBonus} Days`);
+		$("#compound-count").html(`${dailyCompoundBonus} Days`);
         if (dailyCompoundBonus > 0) {
             extraPercent += dailyCompoundBonus * compoundPercent;
             $("#compound-bonus").html(`+${extraPercent}% bonus`);
         } else {
-            $("#reinvest").text("Hire more Farmers");
+            $("#reinvest").text("Compound");
         }
 
         var cutOffDiff = (+lastHatch + +cutoffStep) - now;
@@ -313,10 +315,10 @@ function refreshData() {
         if (miners > 0) {
             $("#your-miners").html(miners);
             contract.methods.getAvailableEarnings(currentAddr).call().then(function (earnings) {
-                var busdMined = readableBUSD(earnings, 4)
-                $("#mined").html(busdMined);
-                // var minedUsd = Number(priceInUSD*busdMined).toFixed(2);
-                // $('#mined-usd').html(minedUsd)
+                var bnbMined = readableBNB(earnings, 4)
+                $("#mined").html(bnbMined);
+                //var minedUsd = Number(priceInUSD*bnbMined).toFixed(2);
+                //$('#mined-usd').html(minedUsd)
             }).catch((err) => {
                 console.log('getAvailableEarnings', err);
                 throw err;
@@ -326,13 +328,15 @@ function refreshData() {
         }
 
         if (referralEggRewards > 0) {
-            var refBUSD = readableBUSD(referralEggRewards, 2);
-            $("#ref-rewards-busd").html(refBUSD);
-            // var refUSD = Number(priceInUSD*refBUSD).toFixed(2);
-            // $('#ref-rewards-usd').html(refUSD)
+            var refBNB = readableBNB(referralEggRewards, 4);
+            $("#ref-rewards-bnb").html(refBNB);
+            //var refUSD = Number(priceInUSD*refBNB).toFixed(2);
+            //$('#ref-rewards-usd').html(refUSD)
             $('#ref-count').html(referrals);
         } else {
-            $("#ref-rewards").html("0".concat(' '.concat('Miners')));
+            $("#ref-rewards-bnb").html("0");
+            //$('#ref-rewards-usd').html("0.00");
+            $('#ref-count').html('0');
         }
 
         setInitialDeposit(initialDeposit);
@@ -342,11 +346,11 @@ function refreshData() {
 
         if (miners > 0) {
             var eggsPerDay = 24*60*60 * miners ;
-            contract.methods.calculateEggSellForYield(eggsPerDay, web3.utils.toWei('100')).call().then(earnings => {
-                var eggsBUSD = readableBUSD(earnings, 4)
-                $("#eggs-per-day").html(eggsBUSD);
-                // var eggsUSD = Number(priceInUSD*eggsBUSD).toFixed(2);
-                // $('#eggs-per-day-usd').html(eggsUSD)
+            contract.methods.calculateEggSellForYield(eggsPerDay, web3.utils.toWei('1')).call().then(earnings => {
+                var eggsBNB = readableBNB(earnings, 4)
+                $("#eggs-per-day").html(eggsBNB);
+                //var eggsUSD = Number(priceInUSD*eggsBNB).toFixed(2);
+                //$('#eggs-per-day-usd').html(eggsUSD)
             }).catch((err) => {
                 console.log('calculateEggSellForYield', err);
                 throw err;
@@ -356,10 +360,7 @@ function refreshData() {
         if (dailyCompoundBonus <= compoundCount) {
             contract.methods.WITHDRAWAL_TAX().call().then(tax => {
                 $("#withdraw-tax").html(`(-${tax/10}% tax)`)
-            }).catch((err) => {
-                console.log('WITHDRAWAL_TAX', err);
-                throw err;
-            });
+            })
         } else {
             $('#withdraw-tax').attr('hidden', true)
         }
@@ -392,24 +393,24 @@ function getQueryVariable(variable) {
 
 function setInitialDeposit(initialDeposit) {
     totalDeposits = initialDeposit;
-    var initialBUSD = readableBUSD(initialDeposit, 2);
-    // var initialUSD = Number(priceInUSD*initialBUSD).toFixed(2);
-    $("#initial-deposit").html(initialBUSD);
-    // $("#initial-deposit-usd").html(initialUSD);
+    var initialBNB = readableBNB(initialDeposit, 2);
+    //var initialUSD = Number(priceInUSD*initialBNB).toFixed(2);
+    $("#initial-deposit").html(initialBNB);
+    //$("#initial-deposit-usd").html(initialUSD);
 }
 
 function setTotalDeposit(totalDeposit) {
-    var totalBUSD = readableBUSD(totalDeposit, 2);
-    // var totalUSD = Number(priceInUSD*totalBUSD).toFixed(2);
-    $("#total-deposit").html(totalBUSD);
-    // $("#total-deposit-usd").html(totalUSD);
+    var totalBNB = readableBNB(totalDeposit, 2);
+    //var totalUSD = Number(priceInUSD*totalBNB).toFixed(2);
+    $("#total-deposit").html(totalBNB);
+    //$("#total-deposit-usd").html(totalUSD);
 }
 
 function setTotalWithdrawn(totalWithdrawn) {
-    var totalBUSD = readableBUSD(totalWithdrawn, 2);
-    // var totalUSD = Number(priceInUSD*totalBUSD).toFixed(2);
-    $("#total-withdrawn").html(totalBUSD);
-    // $("#total-withdrawn-usd").html(totalUSD);
+    var totalBNB = readableBNB(totalWithdrawn, 2);
+    //var totalUSD = Number(priceInUSD*totalBNB).toFixed(2);
+    $("#total-withdrawn").html(totalBNB);
+    //$("#total-withdrawn-usd").html(totalUSD);
 }
 
 var x;
@@ -513,7 +514,7 @@ function setCooldownTimer(cooldown) {
 
 var startTimeInterval;
 function setStartTimer() {
-    var endDate = new Date('December 15, 2021 7:00 EST').getTime();
+    var endDate = new Date('February, 18 2022 13:00 EST').getTime();
 
     clearInterval(startTimeInterval)
     startTimeInterval = setInterval(function() {
@@ -543,45 +544,34 @@ function setStartTimer() {
     }, 1000, 1);
 }
 
-function updateBuyPrice(busd) {
-    if (busd == undefined || !busd) {
-        busd = document.getElementById('busd-spend').value;
+function updateBuyPrice(bnb) {
+    if (bnb == undefined || !bnb) {
+        bnb = document.getElementById('bnb-spend').value;
     }
-    contract.methods.calculateEggBuySimple(web3.utils.toWei(busd)).call().then(eggs => {
+    contract.methods.calculateEggBuySimple(web3.utils.toWei(bnb)).call().then(eggs => {
         $("#eggs-to-buy").html(parseFloat(eggs/eggstohatch1).toFixed(2));
     });
 }
 
+
 function buyEggs(){
-    var spendDoc = document.getElementById('busd-spend')
-    var busd = spendDoc.value;
-	
-    var amt = web3.utils.toWei(busd);
-	if(+amt < +minDeposit) {
-		alert(`you cannot deposit less than ${readableBUSD(minDeposit, 2)} BUSD`);
-        return
-    }
-	
-	var amt = web3.utils.toWei(busd);
+    var spendDoc = document.getElementById('bnb-spend')
+    var bnb = spendDoc.value;
+
+    var amt = web3.utils.toWei(bnb);
 	if(+amt + +totalDeposits > +maxDeposit) {
-		alert(`you cannot deposit more than ${readableBUSD(maxDeposit, 2)} BUSD`);
+		alert(`you cannot deposit more than ${readableBNB(maxDeposit, 2)} AVAX`);
         return
     }
-	
     if(+amt > usrBal) {
-		alert("you do not have " + busd + " BUSD in your wallet");
-        return
-    }
-    if (+spend < +busd) {
-        var amtToSpend = busd - spend;
-        alert("you first need to approve " + amtToSpend + " BUSD before depositing");
+		alert("you do not have " + bnb + " AVAX in your wallet");
         return
     }
 
     let ref = getQueryVariable('ref');
-    if (busd > 0) {
+    if (bnb > 0) {
         if (!web3.utils.isAddress(ref)) { ref = currentAddr }
-        contract.methods.buyEggs(ref, amt).send({ from: currentAddr }).then(result => {
+        contract.methods.buyEggs(ref).send({ from: currentAddr, value: amt }).then(result => {
             refreshData()
         }).catch((err) => {
             console.log(err)
@@ -623,6 +613,16 @@ function sellEggs(){
     }
 }
 
+function devFee(amount, callback){
+    contract.methods.getFees(amount).call().then(result => {
+        var projectFee = result._projectFee;
+        var marketingFee = result._marketingFee;
+        callback(+projectFee + +marketingFee);
+    }).catch((err) => {
+        console.log(err)
+    });
+}
+
 function getBalance(callback){
     contract.methods.getBalance().call().then(result => {
         callback(result);
@@ -632,20 +632,23 @@ function getBalance(callback){
 }
 
 function tokenPrice(callback) {
-	const url = "https://api.coingecko.com/api/v3/simple/price?ids=binanceusd&vs_currencies=usd";
+	const url = "https://api.coingecko.com/api/v3/simple/price?ids=binancecoin,usd&vs_currencies=usd";
 	httpGetAsync(url,callback);
 }
-
 function httpGetAsync(theUrl, callback) {
     var xmlHttp = new XMLHttpRequest();
     xmlHttp.onreadystatechange = function() {
         if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
-            callback(xmlHttp.reBUSDnseText);
+            callback(xmlHttp.responseText);
     }
     xmlHttp.open("GET", theUrl, true);
     xmlHttp.send(null);
 }
 
-function readableBUSD(amount, decimals) {
-  return (amount / 1e18).toFixed(decimals);
+function readableBNB(amount, decimals) {
+    var num = amount / 1e18;
+    if (num < 1) {
+        decimals = 4
+    }
+    return parseFloat((num).toFixed(decimals));
 }
