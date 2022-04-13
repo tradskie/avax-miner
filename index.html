@@ -335,9 +335,12 @@
                     <span style="font-size: 16px;">2.</span><!-- <i class="bi-bank"></i> -->
                     Deposit <span class="busd">AVAX</span>
                     <span class="usd">
-                      (<span id="max-deposit">0 </span> max)
-                    </span>
-                    <input class="form-control" id="busd-spend" name="buy-miners" onChange="updateBuyPrice()" step="100" type="number" value="10">
+						( min<span class="busd" id="min-deposit">0 </span>, 
+					  </span>	
+				  <span class="usd">
+					max<span class="busd" id="max-deposit">0</span>)
+				  </span>
+                    <input class="form-control" id="bnb-spend" name="buy-miners" onChange="updateBuyPrice()" step="100" type="number" value="10">
                   </strong>
                   <button class="start-btn"  style="width: 98%;" id="buy-eggs-btn" onclick="buyEggs()" role="button" disabled>
                     Hire
