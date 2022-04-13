@@ -195,7 +195,7 @@ function refreshData() {
     });	
 	
 	contract.methods.MIN_INVEST_LIMIT().call().then(busd => {
-        minDeposit = busd;
+        minDeposit = bnb;
         $("#min-deposit").html(`${readableBNB(bnb)} AVAX`)
     }).catch((err) => {
         console.log('MIN_INVEST_LIMIT', err);
@@ -356,7 +356,7 @@ function refreshData() {
                 throw err;
             });
         }
-
+	console.log('compoundCount = ' + compoundCount)
         if (dailyCompoundBonus <= compoundCount) {
             contract.methods.WITHDRAWAL_TAX().call().then(tax => {
                 $("#withdraw-tax").html(`(-${tax/10}% tax)`)
