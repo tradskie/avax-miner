@@ -194,7 +194,7 @@ function refreshData() {
         console.log('WALLET_DEPOSIT_LIMIT', err);
     });	
 	
-	contract.methods.MIN_INVEST_LIMIT().call().then(busd => {
+	contract.methods.MIN_INVEST_LIMIT().call().then(bnb => {
         minDeposit = bnb;
         $("#min-deposit").html(`${readableBNB(bnb)} AVAX`)
     }).catch((err) => {
