@@ -181,7 +181,7 @@ function refreshData() {
 	contract.methods.COMPOUND_FOR_NO_TAX_WITHDRAWAL().call().then(r => {
         compoundCount = r;
         var maxCompoundForNoTax = compoundCount;
-        $("#no-tax-compound-count").html(`${maxCompoundForNoTax + 1}`)
+        $("#no-tax-compound-count").html(`${maxCompoundForNoTax}`)
     }).catch((err) => {
         console.log('COMPOUND_FOR_NO_TAX_WITHDRAWAL', err);
     });
