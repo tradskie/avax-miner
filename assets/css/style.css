@@ -1643,7 +1643,7 @@ section {
   position: absolute;
   right: 0;
   left: 20px;
-  color: #ffc451;
+  color: #f82020;
 }
 .faq .faq-list .icon-show,
 .faq .faq-list .icon-close {
@@ -1663,7 +1663,7 @@ section {
   color: rgba(255, 255, 255, 0.8);
 }
 .faq .faq-list a.collapsed:hover {
-  color: #ffc451;
+  color: #f82020;
 }
 .faq .faq-list a.collapsed .icon-show {
   display: inline-block;
